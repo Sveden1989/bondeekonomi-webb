@@ -1,0 +1,168 @@
+/* Bondeekonomi – gemensam stil för hemsidan. Inga externa resurser. */
+
+:root {
+  --bakgrund: #f7f5ef;
+  --yta: #ffffff;
+  --text: #1f2a1f;
+  --dov: #5b665b;
+  --grön: #2f7d3a;
+  --grön-mörk: #23612c;
+  --grön-ljus: #e6f0e3;
+  --guld: #d9a12b;
+  --kant: #e2ded2;
+  --fyll-i: #fff3c4;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bakgrund: #141a14;
+    --yta: #1d251d;
+    --text: #e8ece6;
+    --dov: #a3ada2;
+    --grön: #5fb36b;
+    --grön-mörk: #7cc887;
+    --grön-ljus: #1f2e20;
+    --guld: #e5b54a;
+    --kant: #2e3a2e;
+    --fyll-i: #4a4020;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bakgrund);
+  color: var(--text);
+  font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+a { color: var(--grön); }
+a:hover { color: var(--grön-mörk); }
+
+.ram {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Sidhuvud */
+.huvud {
+  border-bottom: 1px solid var(--kant);
+  background: var(--yta);
+}
+.huvud .ram {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 64px;
+  flex-wrap: wrap;
+}
+.logga {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 19px;
+}
+.logga img { width: 36px; height: 36px; border-radius: 8px; }
+.meny { display: flex; gap: 18px; flex-wrap: wrap; font-size: 15px; }
+.meny a { text-decoration: none; color: var(--dov); }
+.meny a:hover, .meny a[aria-current="page"] { color: var(--grön); }
+
+/* Startsidans topp */
+.topp {
+  padding: 56px 0 40px;
+  text-align: center;
+}
+.topp img { width: 112px; height: 112px; border-radius: 24px; box-shadow: 0 8px 24px rgba(0, 0, 0, .12); }
+.topp h1 { font-size: clamp(30px, 6vw, 44px); line-height: 1.15; margin: 24px 0 12px; }
+.topp p.ingress { font-size: 19px; color: var(--dov); max-width: 620px; margin: 0 auto 28px; }
+
+.knapp {
+  display: inline-block;
+  background: var(--grön);
+  color: #fff;
+  padding: 13px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.knapp:hover { background: var(--grön-mörk); color: #fff; }
+.knapp.inaktiv,
+.knapp.inaktiv:hover { background: var(--yta); color: var(--dov); border: 1px solid var(--kant); cursor: default; }
+.liten { font-size: 14px; color: var(--dov); }
+
+/* Kort med funktioner */
+.rutnät {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 8px 0 48px;
+}
+.kort {
+  background: var(--yta);
+  border: 1px solid var(--kant);
+  border-radius: 16px;
+  padding: 20px;
+}
+.kort h3 { margin: 0 0 6px; font-size: 18px; }
+.kort p { margin: 0; color: var(--dov); font-size: 16px; }
+.kort .symbol { font-size: 26px; line-height: 1; margin-bottom: 10px; }
+
+h2 { font-size: 26px; margin: 48px 0 16px; }
+
+/* Pris */
+.priser {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.pris { text-align: center; }
+.pris .belopp { font-size: 34px; font-weight: 700; color: var(--grön); }
+.pris .period { color: var(--dov); }
+
+/* Textsidor (policy, support) */
+.text { padding-top: 32px; padding-bottom: 48px; }
+.text h1 { font-size: clamp(28px, 5vw, 38px); line-height: 1.2; margin: 0 0 8px; }
+.text h2 { font-size: 22px; margin: 36px 0 10px; }
+.text li { margin: 4px 0; }
+.ruta {
+  background: var(--grön-ljus);
+  border: 1px solid var(--kant);
+  border-left: 4px solid var(--grön);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 20px 0;
+}
+.ruta ul { margin: 0; padding-left: 20px; }
+
+details {
+  background: var(--yta);
+  border: 1px solid var(--kant);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 10px 0;
+}
+summary { cursor: pointer; font-weight: 600; }
+details p, details ol, details ul { margin: 10px 0 0; color: var(--text); }
+
+/* Uppgifter som ägaren ska fylla i innan sidan publiceras. */
+.fyll-i { background: var(--fyll-i); padding: 0 4px; border-radius: 4px; }
+
+/* Sidfot */
+.fot {
+  border-top: 1px solid var(--kant);
+  padding: 24px 0 40px;
+  font-size: 14px;
+  color: var(--dov);
+}
+.fot .ram { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+.fot a { color: var(--dov); }
