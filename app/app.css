@@ -1,0 +1,181 @@
+/* Bondeekonomi – webbversionen (Mina kvitton). Inga externa resurser. */
+
+:root {
+  --bakgrund: #f6f4ed;
+  --yta: #ffffff;
+  --text: #17261d;
+  --dov: #5d6a60;
+  --grön: #173d2c;
+  --grön-mellan: #2f6b45;
+  --grön-ljus: #e7efe6;
+  --guld: #c5a35a;
+  --åker: #d9c79c;
+  --åker-ljus: #e9dfc4;
+  --kant: #e3dfd2;
+  --orange: #b4610e;
+  --orange-ljus: #fbefdf;
+  --röd: #b42318;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bakgrund: #121813;
+    --yta: #1b231c;
+    --text: #e8ede7;
+    --dov: #a4b0a5;
+    --grön: #8fcf9d;
+    --grön-mellan: #6fbf80;
+    --grön-ljus: #1f2e22;
+    --guld: #d6b56b;
+    --åker: #5b5236;
+    --åker-ljus: #3d3826;
+    --kant: #2c372d;
+    --orange: #f0a65a;
+    --orange-ljus: #33281a;
+    --röd: #f2867b;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bakgrund);
+  color: var(--text);
+  font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+main { flex: 1; }
+a { color: var(--grön-mellan); }
+.ram { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--guld); outline-offset: 2px; }
+
+/* Sidhuvud */
+.topp { background: var(--yta); border-bottom: 1px solid var(--kant); }
+.topp-inre { display: flex; align-items: center; justify-content: space-between; min-height: 60px; gap: 12px; }
+.logga { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-weight: 700; font-size: 18px; }
+.logga img { border-radius: 7px; }
+.konto { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--dov); min-width: 0; }
+.konto span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.länkknapp { background: none; border: 0; color: var(--grön-mellan); font: inherit; cursor: pointer; padding: 6px 0; text-decoration: underline; }
+
+.knapp {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--grön); color: #fff; border: 0; border-radius: 12px;
+  padding: 14px 26px; font-family: inherit; font-size: 17px; font-weight: 600; line-height: 1; cursor: pointer;
+}
+.knapp:hover { background: var(--grön-mellan); }
+@media (prefers-color-scheme: dark) { .knapp { color: #10170f; } }
+
+.fel { background: var(--orange-ljus); color: var(--orange); border-radius: 12px; padding: 12px 16px; margin: 20px 0 0; }
+
+/* Inloggning */
+.inloggning { max-width: 560px; margin: 0 auto; text-align: center; padding: 48px 0 56px; }
+.illustration { width: 240px; height: 160px; }
+.inloggning h1 { font-size: clamp(28px, 6vw, 40px); line-height: 1.15; margin: 16px 0 12px; color: var(--grön); }
+.ingress { font-size: 18px; color: var(--dov); margin: 0 0 28px; }
+.fakta { text-align: left; background: var(--yta); border: 1px solid var(--kant); border-radius: 16px; padding: 18px 22px 18px 40px; margin: 28px 0 12px; color: var(--dov); font-size: 15px; }
+.fakta li { margin: 4px 0; }
+.liten { font-size: 14px; color: var(--dov); }
+
+/* Laddar */
+.laddar { text-align: center; padding: 80px 0; color: var(--dov); }
+.snurra { width: 36px; height: 36px; margin: 0 auto 16px; border-radius: 50%; border: 4px solid var(--kant); border-top-color: var(--grön); animation: snurra 1s linear infinite; }
+@keyframes snurra { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .snurra { animation: none; } }
+
+/* Verktygsrad */
+.demoband { background: var(--grön-ljus); color: var(--grön); border-radius: 12px; padding: 10px 16px; margin: 20px 0 0; font-size: 15px; }
+.verktyg { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin: 24px 0 16px; }
+.flikar { display: inline-flex; background: var(--yta); border: 1px solid var(--kant); border-radius: 12px; padding: 4px; }
+.flikar button { border: 0; background: none; font: inherit; font-weight: 600; color: var(--dov); padding: 8px 14px; border-radius: 9px; cursor: pointer; }
+.flikar button[aria-selected="true"] { background: var(--grön); color: #fff; }
+@media (prefers-color-scheme: dark) { .flikar button[aria-selected="true"] { color: #10170f; } }
+.verktyg > * { min-width: 0; }
+.val { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; min-width: 0; }
+.val label { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--dov); }
+select, input[type="search"] {
+  font: inherit; color: var(--text); background: var(--yta); border: 1px solid var(--kant);
+  border-radius: 10px; padding: 8px 10px;
+}
+input[type="search"] { min-width: 0; flex: 1 1 220px; max-width: 100%; }
+
+/* Kvittolistan */
+.lista { display: grid; gap: 8px; margin-bottom: 40px; }
+.kvitto {
+  display: grid; grid-template-columns: 92px 1fr auto; gap: 4px 16px; align-items: center;
+  background: var(--yta); border: 1px solid var(--kant); border-radius: 14px; padding: 14px 16px;
+  text-align: left; font: inherit; color: inherit; cursor: pointer; width: 100%;
+}
+.kvitto:hover { border-color: var(--grön-mellan); }
+.kvitto > span { min-width: 0; display: block; }
+.kvitto .datum { color: var(--dov); font-size: 14px; font-variant-numeric: tabular-nums; }
+.kvitto .ver { display: block; font-size: 12px; color: var(--guld); font-weight: 700; letter-spacing: .02em; }
+.kvitto .titel { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kvitto .under { display: block; color: var(--dov); font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kvitto .belopp { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.kvitto .belopp.inkomst { color: var(--grön-mellan); }
+.märke { display: inline-block; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 2px 8px; margin-left: 6px; vertical-align: 1px; }
+.märke.orange { background: var(--orange-ljus); color: var(--orange); }
+.tomt { text-align: center; color: var(--dov); padding: 48px 16px; background: var(--yta); border: 1px dashed var(--kant); border-radius: 16px; }
+
+@media (max-width: 560px) {
+  .kvitto { grid-template-columns: 1fr auto; }
+  .kvitto .datum { grid-column: 1 / -1; }
+  .flikar { width: 100%; }
+  .flikar button { flex: 1; }
+  .val { width: 100%; }
+  .val label { flex: 1 1 140px; }
+  .val select { flex: 1; min-width: 0; }
+}
+
+/* Summering */
+.kort-rad { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.kort { background: var(--yta); border: 1px solid var(--kant); border-radius: 16px; padding: 18px 20px; }
+.kort h3 { margin: 0 0 4px; font-size: 15px; color: var(--dov); font-weight: 600; }
+.kort .stort { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--grön); }
+.kort .förklaring { font-size: 14px; color: var(--dov); margin: 4px 0 0; }
+.kort ul { list-style: none; padding: 0; margin: 10px 0 0; font-size: 14px; color: var(--dov); font-variant-numeric: tabular-nums; }
+.varning { color: var(--orange); font-size: 14px; }
+table.summor { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.summor th, .summor td { text-align: left; padding: 8px 4px; border-bottom: 1px solid var(--kant); }
+.summor td.tal, .summor th.tal { text-align: right; white-space: nowrap; }
+.summor tfoot td { font-weight: 700; border-bottom: 0; }
+.fotnot { color: var(--dov); font-size: 14px; margin: 8px 0 40px; }
+
+/* Detalj */
+dialog {
+  border: 0; border-radius: 20px; padding: 0; width: min(760px, calc(100% - 24px)); max-height: calc(100% - 32px);
+  background: var(--yta); color: var(--text); box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+}
+dialog::backdrop { background: rgba(15, 25, 18, .45); }
+.detalj-inre { padding: 24px; position: relative; }
+.stäng { position: absolute; top: 12px; right: 14px; border: 0; background: var(--bakgrund); color: var(--text); width: 36px; height: 36px; border-radius: 50%; font-size: 22px; cursor: pointer; }
+.detalj-ver { color: var(--guld); font-weight: 700; margin: 0; }
+.detalj-inre h2 { margin: 2px 40px 4px 0; font-size: 24px; }
+.uppgifter { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 16px 0; }
+.uppgifter dt { color: var(--dov); }
+.uppgifter dd { margin: 0; }
+.rader { list-style: none; padding: 0; margin: 0 0 8px; border-top: 1px solid var(--kant); }
+.rader li { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 10px 0; border-bottom: 1px solid var(--kant); }
+.rader li.privat { color: var(--dov); }
+.radtitel { font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.radbelopp { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.radinfo { grid-column: 1 / -1; color: var(--dov); font-size: 14px; }
+.rader .märke { justify-self: start; margin-left: 0; }
+.märke.grå { background: var(--bakgrund); color: var(--dov); }
+.verksamhet { margin: 8px 0 0; }
+.bilder { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+.bilder a, .bilder .bildplats { display: block; border: 1px solid var(--kant); border-radius: 12px; overflow: hidden; background: var(--bakgrund); min-height: 160px; }
+.bilder img { display: block; width: 100%; height: auto; }
+.bildplats { display: flex; align-items: center; justify-content: center; color: var(--dov); font-size: 14px; padding: 16px; }
+
+/* Sidfot */
+.fot { border-top: 1px solid var(--kant); padding: 20px 0 32px; font-size: 14px; color: var(--dov); }
+.fot .ram { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
+.fot a { color: var(--dov); }

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mina kvitton – Bondeekonomi</title>
+  <meta name="description" content="Se dina kvitton från appen Bondeekonomi direkt från din Google Drive.">
+  <meta name="robots" content="noindex">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://accounts.google.com/gsi/client; style-src 'self' https://accounts.google.com/gsi/style; connect-src 'self' https://www.googleapis.com https://accounts.google.com/gsi/; frame-src https://accounts.google.com/gsi/; img-src 'self' blob: data:">
+  <link rel="icon" href="../ikon.png" type="image/png">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+  <link rel="stylesheet" href="app.css">
+  <script src="konfig.js"></script>
+  <script src="logik.js"></script>
+  <script src="drive.js"></script>
+  <script src="demo.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topp">
+    <div class="ram topp-inre">
+      <a class="logga" href="../"><img src="../ikon.png" alt="" width="32" height="32">Bondeekonomi</a>
+      <div class="konto" id="konto" hidden>
+        <span id="kontonamn"></span>
+        <button type="button" class="länkknapp" id="loggaUt">Logga ut</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="ram">
+    <p class="fel" id="fel" role="alert" hidden></p>
+
+    <!-- Inloggning -->
+    <section class="inloggning" id="inloggning">
+      <svg class="illustration" viewBox="0 0 240 160" aria-hidden="true">
+        <rect x="20" y="118" width="200" height="8" rx="4" fill="var(--åker)"/>
+        <path d="M30 118 C70 96 110 104 150 92 C180 84 200 90 214 86 L214 118 Z" fill="var(--åker-ljus)"/>
+        <rect x="92" y="18" width="76" height="104" rx="6" fill="var(--yta)" stroke="var(--grön)" stroke-width="3"/>
+        <path d="M92 118 l8 -6 l8 6 l8 -6 l8 6 l8 -6 l8 6 l8 -6 l8 6 l8 -6 l4 3" fill="none" stroke="var(--grön)" stroke-width="3"/>
+        <line x1="104" y1="38" x2="156" y2="38" stroke="var(--dov)" stroke-width="4" stroke-linecap="round"/>
+        <line x1="104" y1="52" x2="142" y2="52" stroke="var(--dov)" stroke-width="4" stroke-linecap="round"/>
+        <line x1="104" y1="66" x2="150" y2="66" stroke="var(--dov)" stroke-width="4" stroke-linecap="round"/>
+        <line x1="104" y1="84" x2="156" y2="84" stroke="var(--grön)" stroke-width="3"/>
+        <path d="M130 112 v-18 M130 98 q-8 -4 -8 -12 q8 2 8 12 M130 98 q8 -4 8 -12 q-8 2 -8 12" fill="none" stroke="var(--guld)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="196" cy="34" r="12" fill="var(--guld)" opacity=".85"/>
+      </svg>
+      <h1>Dina kvitton på webben</h1>
+      <p class="ingress">Logga in med samma Google-konto som i appen. Sidan läser kvittona direkt från din Google Drive – samma kvitton, summor och moms som i telefonen.</p>
+      <button type="button" class="knapp" id="loggaIn">Logga in med Google</button>
+      <p><a href="?demo" id="demolänk">Visa med exempelkvitton</a></p>
+      <ul class="fakta">
+        <li>Sidan ser bara filer som Bondeekonomi själv har skapat i din Drive.</li>
+        <li>Inget sparas hos oss – vi har ingen egen server.</li>
+        <li>Kvitton skapas och ändras i appen. Webben visar dem.</li>
+      </ul>
+      <p class="liten">Inte inställd? Säkerhetskopian slås på i appen under <strong>Mer › Säkerhetskopia</strong>.</p>
+    </section>
+
+    <!-- Laddar -->
+    <section class="laddar" id="laddar" hidden>
+      <div class="snurra" aria-hidden="true"></div>
+      <p id="laddartext">Hämtar dina kvitton från Google Drive …</p>
+    </section>
+
+    <!-- Kvitton och summering -->
+    <section id="innehåll" hidden>
+      <div class="demoband" id="demoband" hidden>Exempelkvitton – inga riktiga uppgifter. <a href="./">Logga in för att se dina egna.</a></div>
+      <div class="verktyg">
+        <div class="flikar" role="tablist">
+          <button type="button" role="tab" id="flikKvitton" aria-selected="true">Kvitton</button>
+          <button type="button" role="tab" id="flikSummering" aria-selected="false">Summering</button>
+        </div>
+        <div class="val">
+          <label>År <select id="år"></select></label>
+          <label>Period <select id="månad"></select></label>
+          <input type="search" id="sök" placeholder="Sök butik, text eller verifikation" aria-label="Sök">
+        </div>
+      </div>
+
+      <div id="kvittolista"></div>
+      <div id="summering" hidden></div>
+    </section>
+  </main>
+
+  <dialog id="detalj" aria-labelledby="detaljrubrik">
+    <div class="detalj-inre">
+      <button type="button" class="stäng" id="stängDetalj" aria-label="Stäng">×</button>
+      <div id="detaljinnehåll"></div>
+    </div>
+  </dialog>
+
+  <footer class="fot">
+    <div class="ram">
+      <span>Ett underlag till redovisningshjälpen – inte bokföring eller momsdeklaration.</span>
+      <span><a href="../support.html">Support</a> · <a href="../integritetspolicy.html">Integritet</a></span>
+    </div>
+  </footer>
+</body>
+</html>
