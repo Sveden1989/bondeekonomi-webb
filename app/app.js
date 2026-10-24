@@ -76,6 +76,9 @@
         läge.kvitton = kvitton;
         visa("innehåll");
       }
+      var varning = B.ofullständigText(källa.ofullständigt);
+      $("ofullständigt").textContent = varning || "";
+      $("ofullständigt").hidden = !varning;
       fyllPeriodval();
       rita();
     } catch (fel) {
@@ -106,6 +109,7 @@
     läge.kvitton = [];
     $("konto").hidden = true;
     $("demoband").hidden = true;
+    $("ofullständigt").hidden = true;
     if (location.search) history.replaceState(null, "", location.pathname);
     visa("inloggning");
   }
@@ -216,6 +220,9 @@
         el("div", { class: "stort", text: B.beloppMedValuta(s.moms.skillnadMinor) }),
         el("p", { class: "förklaring", text: "utgående minus ingående moms" }))));
 
+    if (!$("ofullständigt").hidden) {
+      behållare.appendChild(el("p", { class: "varning", text: "Summeringen är ofullständig: " + $("ofullständigt").textContent }));
+    }
     if (ejGenomgångna) {
       behållare.appendChild(el("p", { class: "varning", text: (ejGenomgångna === 1 ? "1 kvitto" : ejGenomgångna + " kvitton") + " i Att gå igenom räknas inte med." }));
     }

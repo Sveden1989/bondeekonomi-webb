@@ -187,6 +187,20 @@ var Bondeekonomi = (function () {
   }
 
   /**
+   * Varning när inte alla kvitton i Drive kom med, så att en summa aldrig ser
+   * komplett ut när den inte är det. null om allt lästes.
+   */
+  function ofullständigText(ofullständigt) {
+    if (!ofullständigt) return null;
+    var delar = [];
+    var st = function (n) { return n === 1 ? "1 kvitto" : n + " kvitton"; };
+    if (ofullständigt.olästa) delar.push(st(ofullständigt.olästa) + " kunde inte läsas – uppdatera appen på telefonen eller kontakta support");
+    if (ofullständigt.uppladdas) delar.push(st(ofullständigt.uppladdas) + (ofullständigt.uppladdas === 1 ? " är inte färdiguppladdat" : " är inte färdiguppladdade") + " från telefonen än");
+    if (!delar.length) return null;
+    return delar.join(". ") + ". De räknas inte med i listan och summeringen.";
+  }
+
+  /**
    * Läser en underlag.json-text. Returnerar null om filen inte kan användas:
    * okänd version, okänd status eller ID som inte stämmer med mappnamnet.
    */
@@ -200,6 +214,7 @@ var Bondeekonomi = (function () {
   }
 
   return {
+    ofullständigText: ofullständigText,
     KATEGORIER: KATEGORIER,
     kategori: kategori,
     kategorinamn: kategorinamn,

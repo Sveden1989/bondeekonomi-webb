@@ -92,6 +92,10 @@ var BondeekonomiDrive = (function () {
     });
 
     var namnen = Object.keys(perMapp).filter(function (n) { return perMapp[n]["underlag.json"]; });
+    // Mappar utan underlag.json (tomma eller med bara bilder) är kvitton som
+    // telefonen inte har laddat upp färdigt – de räknas, men skiljs från fel.
+    var uppladdas = mappar.filter(function (m) { return !(perMapp[m.name] && perMapp[m.name]["underlag.json"]); }).length;
+    var olästa = 0;
     var kvitton = [];
     var klara = 0;
     var källa = this;
@@ -103,9 +107,12 @@ var BondeekonomiDrive = (function () {
         klara += 1;
         if (framsteg) framsteg(klara, namnen.length);
         if (json) kvitton.push({ json: json, filer: perMapp[namn] });
+        else olästa += 1;
       });
       await Promise.all(omgång);
     }
+    // Läses av sidan efter läsAlla. Webben ändrar aldrig något i Drive.
+    this.ofullständigt = { olästa: olästa, uppladdas: uppladdas };
     return kvitton;
   };
 
