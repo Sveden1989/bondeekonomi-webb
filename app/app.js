@@ -13,6 +13,9 @@
     år: new Date().getFullYear(),
     månad: 0,             // 0 = hela året
     sök: "",
+    visa: "alla",         // alla | utgift | inkomst | attGåIgenom
+    kategori: "",         // "" = alla kategorier
+    sortering: "datum",   // datum | belopp
     flik: "kvitton",
   };
 
@@ -58,6 +61,7 @@
 
   async function starta(källa) {
     läge.källa = källa;
+    B.sättKategorier(null);
     visaFel("");
     visa("laddar");
     $("laddartext").textContent = "Hämtar dina kvitton från Google Drive …";
@@ -105,6 +109,10 @@
   }
 
   function loggaUt() {
+    var varInloggad = läge.källa instanceof BondeekonomiDrive.DriveKalla;
+    if (läge.källa && läge.källa.glöm) läge.källa.glöm();
+    $("detalj").close();
+    $("deladdator").hidden = !varInloggad;
     läge.källa = null;
     läge.kvitton = [];
     $("konto").hidden = true;
@@ -131,13 +139,24 @@
       månadsval.appendChild(el("option", { value: i + 1, text: m.charAt(0).toUpperCase() + m.slice(1) }));
     });
     månadsval.value = läge.månad;
+    fyllKategorival();
+  }
+
+  function fyllKategorival() {
+    var val = $("kategori");
+    val.textContent = "";
+    val.appendChild(el("option", { value: "", text: "Alla kategorier" }));
+    var finns = B.användaKategorier(läge.kvitton.map(function (k) { return k.json; }));
+    finns.forEach(function (k) { val.appendChild(el("option", { value: k.kategori, text: k.namn })); });
+    if (!finns.some(function (k) { return k.kategori === läge.kategori; })) läge.kategori = "";
+    val.value = läge.kategori;
   }
 
   function väljFlik(flik) {
     läge.flik = flik;
     $("flikKvitton").setAttribute("aria-selected", flik === "kvitton");
     $("flikSummering").setAttribute("aria-selected", flik === "summering");
-    $("sök").hidden = flik !== "kvitton";
+    ["visaval", "kategorival", "sorteringsval", "sökval"].forEach(function (id) { $(id).hidden = flik !== "kvitton"; });
     rita();
   }
 
@@ -158,16 +177,22 @@
     behållare.textContent = "";
     var poster = {};
     läge.kvitton.forEach(function (k) { poster[k.json.id] = k; });
-    var synliga = B.sorterade(läge.kvitton.map(function (k) { return k.json; }))
+    var alla = läge.kvitton.map(function (k) { return k.json; });
+    var filter = { visa: läge.visa, kategori: läge.kategori };
+    var synliga = (läge.sortering === "belopp" ? B.sorteradePåBelopp(alla) : B.sorterade(alla))
       .filter(iVald)
+      .filter(function (json) { return B.passarFilter(json, filter); })
       .filter(function (json) { return B.matchar(json, läge.sök); });
 
     if (synliga.length === 0) {
-      behållare.appendChild(el("p", { class: "tomt", text: läge.sök
-        ? "Inga kvitton matchar sökningen."
+      var filtrerat = läge.sök || läge.visa !== "alla" || läge.kategori;
+      behållare.appendChild(el("p", { class: "tomt", text: filtrerat
+        ? "Inga kvitton matchar sökningen och filtren."
         : "Inga kvitton i den här perioden." }));
       return;
     }
+    behållare.appendChild(el("p", { class: "antal", role: "status",
+      text: synliga.length === 1 ? "1 kvitto" : synliga.length + " kvitton" }));
     var lista = el("div", { class: "lista" });
     synliga.forEach(function (json) {
       var d = json.details || {};
@@ -293,7 +318,7 @@
       bilder.appendChild(plats);
       var filID = post.filer[bilaga.fileName];
       if (!filID) { plats.textContent = "Bilden finns inte i Google Drive."; return; }
-      läge.källa.fil(filID).then(function (adress) {
+      läge.källa.fil(filID, bilaga.contentType).then(function (adress) {
         var ärPdf = bilaga.contentType === "application/pdf";
         var länk = el("a", { href: adress, target: "_blank", rel: "noopener" },
           ärPdf ? el("span", { class: "bildplats", text: "Öppna PDF (bild " + bilaga.order + ")" })
@@ -302,6 +327,21 @@
       }).catch(function () { plats.textContent = "Bilden kunde inte laddas."; });
     });
     innehåll.appendChild(bilder);
+    var rättelser = Array.isArray(json.corrections) ? json.corrections : [];
+    if (rättelser.length) {
+      innehåll.appendChild(el("h3", { text: "Ändringshistorik" }));
+      innehåll.appendChild(el.apply(null, ["ul", { class: "rättelser" }].concat(rättelser.map(function (r) {
+        var när = new Date(r.changedAt);
+        var tid = isNaN(när) ? "" : när.toLocaleString("sv-SE", { dateStyle: "medium", timeStyle: "short" });
+        var före = r.previousDetails || {};
+        var verksamhet = (före.lines || []).filter(function (rad) { return rad.business; });
+        var summa = verksamhet.reduce(function (s, rad) { return s + rad.amountMinor; }, 0);
+        var moms = verksamhet.reduce(function (s, rad) { return s + rad.vatMinor; }, 0);
+        var delar = [före.date ? datumtext(före.date) : null, före.counterparty || null,
+          B.beloppMedValuta(summa) + ", moms " + B.beloppMedValuta(moms)].filter(Boolean);
+        return el("li", null, el("strong", { text: "Rättad " + tid }), " – före: " + delar.join(" · "));
+      }))));
+    }
     innehåll.appendChild(el("p", { class: "liten", text: "Underlags-ID " + json.id }));
     $("detalj").showModal();
   }
@@ -310,12 +350,22 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     $("loggaIn").addEventListener("click", loggaIn);
+    // Börja hämta Googles skript redan när man siktar på knappen, så att
+    // inloggningsfönstret öppnas direkt vid klicket.
+    ["pointerenter", "focus", "touchstart"].forEach(function (händelse) {
+      $("loggaIn").addEventListener(händelse, function () {
+        if (konfigureradKlient()) BondeekonomiDrive.laddaGoogle().catch(function () {});
+      }, { passive: true });
+    });
     $("loggaUt").addEventListener("click", loggaUt);
     $("flikKvitton").addEventListener("click", function () { väljFlik("kvitton"); });
     $("flikSummering").addEventListener("click", function () { väljFlik("summering"); });
     $("år").addEventListener("change", function (e) { läge.år = Number(e.target.value); rita(); });
     $("månad").addEventListener("change", function (e) { läge.månad = Number(e.target.value); rita(); });
     $("sök").addEventListener("input", function (e) { läge.sök = e.target.value; rita(); });
+    $("visa").addEventListener("change", function (e) { läge.visa = e.target.value; rita(); });
+    $("kategori").addEventListener("change", function (e) { läge.kategori = e.target.value; rita(); });
+    $("sortering").addEventListener("change", function (e) { läge.sortering = e.target.value; rita(); });
     $("stängDetalj").addEventListener("click", function () { $("detalj").close(); });
     $("detalj").addEventListener("click", function (e) { if (e.target === $("detalj")) $("detalj").close(); });
 

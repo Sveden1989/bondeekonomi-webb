@@ -2,6 +2,7 @@
 <html lang="sv">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Bondeekonomi – kvitton och moms för jord- och skogsbruk</title>
   <meta name="description" content="Fota kvitton och fakturor, få belopp och moms avlästa direkt i telefonen och ge redovisningshjälpen ett ordnat underlag med verifikationsnummer. För enskild firma inom jord- och skogsbruk.">
@@ -25,7 +26,7 @@
   <a class="hoppa" href="#innehåll">Hoppa till innehållet</a>
 
   <!-- Återanvända linjeikoner -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <svg width="0" height="0" class="ikonbank" aria-hidden="true">
     <defs>
       <symbol id="i-kamera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
       <symbol id="i-telefon" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 18.5h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
@@ -66,8 +67,8 @@
           <div class="knappar">
             <a class="knapp ljus" href="app/?demo">Se exempel på kvitton</a>
           </div>
-          <p class="status"><svg aria-hidden="true"><use href="#i-apple"/></svg>Kommer snart till App Store för iPhone</p>
-          <p class="liten">Prova gratis i 30 dagar. Sedan fullversion för 249 kr – betala en gång.</p>
+          <p><a class="knapp ljus" href="https://apps.apple.com/se/app/id6826544700"><svg aria-hidden="true"><use href="#i-apple"/></svg>Ladda ner i App Store</a></p>
+          <p class="liten">Prova gratis i två månader – utan att bestämma dig. Sedan 49 kr/mån eller 499 kr/år.</p>
         </div>
         <div class="telefoner" aria-hidden="true">
           <div class="telefon"><img src="bilder/kvitton.jpg" alt="" width="600" height="1303"></div>
@@ -277,16 +278,23 @@
       <div class="ram">
         <div class="rubrik">
           <span class="etikett">Pris</span>
-          <h2>Prova gratis. Betala en gång.</h2>
-          <p class="ingress">Introduktionserbjudande under våra första två månader i App Store. Sparade kvitton går alltid att se och exportera.</p>
+          <h2>Två månader gratis</h2>
+          <p class="ingress">Prova allt gratis i två månader utan att bestämma dig – inget dras automatiskt. Vill du fortsätta väljer du sedan månad eller år. Sparade kvitton går alltid att se och exportera.</p>
         </div>
-        <div class="pris vald ensam">
-          <span class="spara">Introduktionspris</span>
-          <h3>Fullversion</h3>
-          <div class="belopp">249 kr <small>engångsköp</small></div>
-          <ul><li>Först 30 dagar gratis – inget dras automatiskt</li><li>Ingen månadsavgift och ingen förnyelse</li><li>Obegränsat antal kvitton och automatisk avläsning</li><li>Säkerhetskopia i din Google Drive</li><li>Fullversionen är din även när erbjudandet tagit slut</li></ul>
+        <div class="priser">
+          <div class="pris">
+            <h3>Månad</h3>
+            <div class="belopp">49 kr <small>/ månad</small></div>
+            <ul><li>Obegränsat antal kvitton</li><li>Automatisk avläsning</li><li>Säkerhetskopia i Google Drive</li></ul>
+          </div>
+          <div class="pris vald">
+            <span class="spara">Spara 89 kr</span>
+            <h3>År</h3>
+            <div class="belopp">499 kr <small>/ år</small></div>
+            <ul><li>Samma funktioner som månad</li><li>Debiteras en gång per år</li><li>Ett köp per år – enkelt att bokföra</li></ul>
+          </div>
         </div>
-        <p class="prisnot">Efter introduktionen erbjuds nya kunder abonnemang för 49 kr i månaden eller 499 kr om året. Köpet görs via ditt Apple-konto.</p>
+        <p class="prisnot">Provperioden är gratis och övergår inte i något köp. Väljer du ett abonnemang förnyas det automatiskt tills du säger upp det, vilket du gör när som helst i inställningarna för ditt Apple-ID. Priserna är inklusive moms.</p>
       </div>
     </section>
 
@@ -303,7 +311,7 @@
           <details><summary>Var sparas mina kvitton?</summary><p>I telefonen. Om du vill även i en mapp som heter Bondeekonomi i din egen Google Drive. Appen ser bara filer den själv har skapat. Vi har ingen egen server och sparar inga kvitton hos oss.</p></details>
           <details><summary>Skickas kvittobilderna någonstans för att läsas av?</summary><p>Nej. Avläsningen av belopp, moms, datum och butik görs helt i telefonen.</p></details>
           <details><summary>Vad händer om jag byter telefon?</summary><p>Logga in med samma Google-konto i appen på den nya telefonen, så kommer kvittona tillbaka från säkerhetskopian – utan dubbletter.</p></details>
-          <details><summary>Vad kostar det, och vad händer om jag inte köper?</summary><p>Under introduktionen provar du gratis i 30 dagar. Sedan kostar fullversionen 249 kr – en gång. Inget dras automatiskt när provperioden tar slut. Sparade kvitton kan du alltid se, rätta och exportera, även utan köp. Nya kvitton, avläsning och säkerhetskopia kräver fullversionen.</p></details>
+          <details><summary>Vad kostar det, och vad händer om jag inte köper?</summary><p>Du provar gratis i två månader utan att bestämma dig – inget dras automatiskt. Vill du fortsätta kostar Bondeekonomi sedan 49 kr i månaden eller 499 kr om året. Sparade kvitton kan du alltid se, rätta och exportera, även utan köp. Nya kvitton, avläsning och säkerhetskopia kräver fullversionen.</p></details>
           <details><summary>Finns appen för Android?</summary><p>Inte än. Bondeekonomi finns för iPhone. Kvittona går att se på webben från vilken dator som helst.</p></details>
         </div>
         <p class="prisnot">Fler frågor? Läs <a href="support.html">supportsidan</a> eller mejla <a href="mailto:support@bondeekonomi.se">support@bondeekonomi.se</a>.</p>

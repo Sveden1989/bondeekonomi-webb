@@ -6,15 +6,15 @@
   <title>Mina kvitton – Bondeekonomi</title>
   <meta name="description" content="Se dina kvitton från appen Bondeekonomi direkt från din Google Drive.">
   <meta name="robots" content="noindex">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://accounts.google.com/gsi/client; style-src 'self' https://accounts.google.com/gsi/style; connect-src 'self' https://www.googleapis.com https://accounts.google.com/gsi/; frame-src https://accounts.google.com/gsi/; img-src 'self' blob: data:">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://accounts.google.com/gsi/client; style-src 'self' https://accounts.google.com/gsi/style; connect-src 'self' https://www.googleapis.com https://accounts.google.com/gsi/; frame-src https://accounts.google.com/gsi/; img-src 'self' blob: data:; object-src 'none'; base-uri 'self'; form-action 'none'">
   <link rel="icon" href="../ikon.png" type="image/png">
   <link rel="apple-touch-icon" href="../apple-touch-icon.png">
   <link rel="stylesheet" href="app.css">
-  <script src="konfig.js"></script>
-  <script src="logik.js"></script>
-  <script src="drive.js"></script>
-  <script src="demo.js"></script>
-  <script src="https://accounts.google.com/gsi/client" async></script>
+  <script src="konfig.js" defer></script>
+  <script src="logik.js" defer></script>
+  <script src="drive.js" defer></script>
+  <script src="demo.js" defer></script>
+  <!-- Googles inloggningsskript laddas först när man vill logga in (drive.js). -->
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -54,6 +54,7 @@
         <li>Inget sparas hos oss – vi har ingen egen server.</li>
         <li>Kvitton skapas och ändras i appen. Webben visar dem.</li>
       </ul>
+      <p class="liten" id="deladdator" hidden>Delar du datorn med andra? Logga även ut från ditt Google-konto i webbläsaren.</p>
       <p class="liten">Inte inställd? Säkerhetskopian slås på i appen under <strong>Mer › Säkerhetskopia</strong>.</p>
     </section>
 
@@ -75,7 +76,18 @@
         <div class="val">
           <label>År <select id="år"></select></label>
           <label>Period <select id="månad"></select></label>
-          <input type="search" id="sök" placeholder="Sök butik, text eller verifikation" aria-label="Sök">
+          <label id="visaval">Visa <select id="visa">
+            <option value="alla">Alla kvitton</option>
+            <option value="utgift">Utgifter</option>
+            <option value="inkomst">Inkomster</option>
+            <option value="attGåIgenom">Att gå igenom</option>
+          </select></label>
+          <label id="kategorival">Kategori <select id="kategori"></select></label>
+          <label id="sorteringsval">Sortera <select id="sortering">
+            <option value="datum">Datum</option>
+            <option value="belopp">Belopp</option>
+          </select></label>
+          <label id="sökval">Sök <input type="search" id="sök" placeholder="Butik, text, belopp eller verifikation"></label>
         </div>
       </div>
 

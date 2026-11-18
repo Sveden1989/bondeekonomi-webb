@@ -2,6 +2,7 @@
 <html lang="sv">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Integritetspolicy – Bondeekonomi</title>
   <meta name="description" content="Hur appen Bondeekonomi hanterar dina kvitton och uppgifter.">
@@ -43,19 +44,19 @@
     <ul>
       <li><strong>Kvittobilder och PDF-filer</strong> som du fotograferar eller importerar.</li>
       <li><strong>Uppgifter du fyller i:</strong> datum, butik eller kund, belopp, moms, kategori, verifikationsnummer och anteckningar.</li>
-      <li><strong>Ditt Google-kontos e-postadress</strong>, om du loggar in för säkerhetskopian. Den används bara för att visa vilket konto som är inloggat.</li>
+      <li><strong>Ditt Google-kontos e-postadress</strong>, om du kopplar Google Drive för säkerhetskopian. Den används bara för att visa vilket konto som är inloggat.</li>
     </ul>
     <p>Allt sparas i appens lagring på telefonen. Det ingår i telefonens vanliga säkerhetskopiering (iCloud-säkerhetskopia eller dator) om du har den påslagen.</p>
 
     <h2>Säkerhetskopia i Google Drive (frivilligt)</h2>
-    <p>Om du loggar in med ditt Google-konto i appen:</p>
+    <p>Om du kopplar Google Drive i appen:</p>
     <ul>
       <li>laddas dina kvitton och uppgifter upp till mappen <strong>Bondeekonomi</strong> i din Google Drive, och hämtas därifrån om du installerar appen på nytt;</li>
       <li>får appen bara tillgång till filer som appen själv har skapat (Googles behörighet <em>drive.file</em>) – inte till dina övriga filer i Drive;</li>
       <li>går överföringen direkt mellan din telefon och Google. Uppgifterna passerar inte någon server hos oss;</li>
       <li>hanterar Google din inloggning enligt <a href="https://policies.google.com/privacy">Googles integritetspolicy</a>.</li>
     </ul>
-    <p>Så länge du är inloggad håller appen säkerhetskopian komplett: saknas en fil i Drive laddas den upp igen från telefonen. Du kan när som helst logga ut i appen (Mer › Säkerhetskopia › Logga ut). Då slutar appen ladda upp, men filerna i din Drive finns kvar tills du själv raderar dem. Du kan också ta bort appens åtkomst på <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>.</p>
+    <p>Så länge Google Drive är kopplad håller appen säkerhetskopian komplett: saknas en fil i Drive laddas den upp igen från telefonen. Du kan när som helst koppla från i appen (Mer › Säkerhetskopia › Koppla från Google Drive). Då slutar appen ladda upp, men filerna i din Drive finns kvar tills du själv raderar dem. Du kan också ta bort appens åtkomst på <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>.</p>
     <p>Bondeekonomis användning och överföring av information som tas emot från Googles API:er följer <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, inklusive kraven på begränsad användning (<em>Limited Use</em>). Informationen används bara för att spara och återställa din säkerhetskopia, säljs aldrig, används inte för reklam och läses inte av människor.</p>
 
     <h2>Köp och betalning</h2>
@@ -73,7 +74,7 @@
     <ul>
       <li><strong>Raderar du ett kvitto i appen</strong> hamnar det i appens papperskorg (Alla kvitton › Papperskorg). Det finns kvar på telefonen och i säkerhetskopian, så att det går att återställa. Originalbilder tas aldrig bort av appen.</li>
       <li><strong>För att ta bort allt från telefonen</strong> raderar du appen.</li>
-      <li><strong>För att ta bort säkerhetskopian</strong> loggar du först ut i appen – annars laddar appen upp kvittona igen – och raderar sedan mappen Bondeekonomi i din Google Drive och tömmer Drives papperskorg.</li>
+      <li><strong>För att ta bort säkerhetskopian</strong> kopplar du först från Google Drive i appen – annars laddar appen upp kvittona igen – och raderar sedan mappen Bondeekonomi i din Google Drive och tömmer Drives papperskorg.</li>
     </ul>
     <p>Tänk på att bokföringslagen kräver att underlag sparas i sju år – exportera och spara dem innan du raderar något.</p>
 

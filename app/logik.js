@@ -28,13 +28,49 @@ var Bondeekonomi = (function () {
     kategoriNamn[k[0]] = k[1];
   });
 
-  /** Okänd kategori räknas som osäker, precis som i appen. */
+  // Användarens namn från kategorier.json: nya namn och egna kategorier.
+  var egnaNamn = Object.create(null);
+
+  function ärInbyggd(kod) {
+    return Object.prototype.hasOwnProperty.call(kategoriNamn, kod);
+  }
+
+  function ärEgenKod(kod) {
+    return typeof kod === "string" && kod.length <= 64 && /^egen_[A-Za-z0-9_-]+$/.test(kod);
+  }
+
+  /** Läser kategorier.json. Utan fil (null) gäller standardnamnen. */
+  function sättKategorier(inställningar) {
+    egnaNamn = Object.create(null);
+    var poster = inställningar && Array.isArray(inställningar.categories) ? inställningar.categories : [];
+    poster.forEach(function (post) {
+      if (!post || typeof post.name !== "string" || post.code === "osaker") return;
+      if (!ärInbyggd(post.code) && !ärEgenKod(post.code)) return;
+      var namn = post.name.trim().slice(0, 40);
+      if (namn) egnaNamn[post.code] = namn;
+    });
+  }
+
+  /** Okänd kategori räknas som osäker, precis som i appen. Egna koder behålls. */
   function kategori(kod) {
-    return Object.prototype.hasOwnProperty.call(kategoriNamn, kod) ? kod : "osaker";
+    return ärInbyggd(kod) || ärEgenKod(kod) ? kod : "osaker";
   }
 
   function kategorinamn(kod) {
-    return kategoriNamn[kategori(kod)];
+    var k = kategori(kod);
+    return egnaNamn[k] || (ärInbyggd(k) ? kategoriNamn[k] : "Egen kategori");
+  }
+
+  /** Inbyggda, egna efter namn, sist osäker – samma ordning som i appen. */
+  function ordningstal(kod) {
+    if (kod === "osaker") return 200;
+    return ärInbyggd(kod) ? kategoriOrdning[kod] : 100;
+  }
+
+  function jämförKategorier(a, b) {
+    return ordningstal(a.kategori) - ordningstal(b.kategori)
+      || a.namn.localeCompare(b.namn, "sv")
+      || (a.kategori < b.kategori ? -1 : 1);
   }
 
   /** 127680 → "1 276,80" (svenskt format, vanligt bindestreck för minus). */
@@ -104,14 +140,60 @@ var Bondeekonomi = (function () {
       });
   }
 
-  /** Söker i motpart, beskrivning, anteckning, rader, verifikation och ID. */
+  /** Bort med mellanslag (även hårda) så att "1245" hittar "1 245,00". */
+  function utanMellanslag(text) {
+    return text.replace(/[\s\u00a0\u202f]/g, "");
+  }
+
+  /**
+   * Söker i motpart, beskrivning, anteckning, rader, verifikation, ID och
+   * belopp (verksamhetens del och varje rad, t.ex. "1245" eller "1 245,00").
+   */
   function matchar(json, sökning) {
     var text = (sökning || "").trim().toLowerCase();
     if (!text) return true;
     var d = json.details || {};
     var delar = [d.counterparty, d.description, d.note, verifikation(json), json.id]
       .concat((d.lines || []).map(function (r) { return r.text; }));
-    return delar.join(" ").toLowerCase().indexOf(text) !== -1;
+    if (delar.join(" ").toLowerCase().indexOf(text) !== -1) return true;
+    var sökt = utanMellanslag(text);
+    if (!/^[0-9.,-]+$/.test(sökt)) return false;
+    var beloppen = (d.lines && d.lines.length ? [summa(json)] : [])
+      .concat((d.lines || []).map(function (r) { return r.amountMinor; }));
+    return beloppen.some(function (öre) { return utanMellanslag(belopp(öre)).indexOf(sökt) !== -1; });
+  }
+
+  /**
+   * Filter i listan: `visa` är "alla", "utgift", "inkomst" eller "attGåIgenom";
+   * `kategori` en kategorikod (tom = alla). Kategorin matchar om någon av
+   * verksamhetens rader har den.
+   */
+  function passarFilter(json, filter) {
+    var f = filter || {};
+    var d = json.details || {};
+    if (f.visa === "attGåIgenom" && json.status !== "toReview") return false;
+    if (f.visa === "utgift" && (json.status === "toReview" || d.direction === "income")) return false;
+    if (f.visa === "inkomst" && (json.status === "toReview" || d.direction !== "income")) return false;
+    if (f.kategori && !verksamhetsrader(json).some(function (r) { return kategori(r.category) === f.kategori; })) return false;
+    return true;
+  }
+
+  /** Kategorierna som finns på kvittona, i appens ordning: [{ kategori, namn }]. */
+  function användaKategorier(kvitton) {
+    var sett = {};
+    kvitton.forEach(function (json) {
+      if (json.status === "deleted") return;
+      verksamhetsrader(json).forEach(function (r) { sett[kategori(r.category)] = true; });
+    });
+    return Object.keys(sett).map(function (k) { return { kategori: k, namn: kategorinamn(k) }; }).sort(jämförKategorier);
+  }
+
+  /** Störst belopp först; lika belopp i datumordning (nyast först). */
+  function sorteradePåBelopp(kvitton) {
+    var datumordning = sorterade(kvitton);
+    var plats = {};
+    datumordning.forEach(function (k, i) { plats[k.id] = i; });
+    return datumordning.slice().sort(function (a, b) { return summa(b) - summa(a) || plats[a.id] - plats[b.id]; });
   }
 
   /**
@@ -153,7 +235,7 @@ var Bondeekonomi = (function () {
 
     function sida(poster) {
       var lista = Object.keys(poster).map(function (k) { return poster[k]; })
-        .sort(function (a, b) { return kategoriOrdning[a.kategori] - kategoriOrdning[b.kategori]; });
+        .sort(jämförKategorier);
       return {
         beloppMinor: lista.reduce(function (s, p) { return s + p.beloppMinor; }, 0),
         momsMinor: lista.reduce(function (s, p) { return s + p.momsMinor; }, 0),
@@ -195,6 +277,7 @@ var Bondeekonomi = (function () {
     var delar = [];
     var st = function (n) { return n === 1 ? "1 kvitto" : n + " kvitton"; };
     if (ofullständigt.olästa) delar.push(st(ofullständigt.olästa) + " kunde inte läsas – uppdatera appen på telefonen eller kontakta support");
+    if (ofullständigt.ejHämtade) delar.push(st(ofullständigt.ejHämtade) + " kunde inte hämtas från Google Drive just nu – ladda om sidan om en stund");
     if (ofullständigt.uppladdas) delar.push(st(ofullständigt.uppladdas) + (ofullständigt.uppladdas === 1 ? " är inte färdiguppladdat" : " är inte färdiguppladdade") + " från telefonen än");
     if (!delar.length) return null;
     return delar.join(". ") + ". De räknas inte med i listan och summeringen.";
@@ -218,6 +301,7 @@ var Bondeekonomi = (function () {
     KATEGORIER: KATEGORIER,
     kategori: kategori,
     kategorinamn: kategorinamn,
+    sättKategorier: sättKategorier,
     belopp: belopp,
     beloppMedValuta: beloppMedValuta,
     verifikation: verifikation,
@@ -226,6 +310,9 @@ var Bondeekonomi = (function () {
     summa: summa,
     sorterade: sorterade,
     matchar: matchar,
+    passarFilter: passarFilter,
+    användaKategorier: användaKategorier,
+    sorteradePåBelopp: sorteradePåBelopp,
     summering: summering,
     år: år,
     tolka: tolka,

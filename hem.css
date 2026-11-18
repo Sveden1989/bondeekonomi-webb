@@ -48,6 +48,7 @@ a { color: var(--skog); }
 @media (prefers-color-scheme: dark) { a { color: #9fd0ae; } }
 
 .ram { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+.ikonbank { position: absolute; }
 .hoppa { position: absolute; left: -9999px; }
 .hoppa:focus { left: 16px; top: 16px; z-index: 10; background: var(--yta); padding: 8px 12px; border-radius: 8px; }
 :focus-visible { outline: 3px solid var(--guld); outline-offset: 3px; }

@@ -99,6 +99,10 @@ a { color: var(--grön-mellan); }
 .verktyg > * { min-width: 0; }
 .val { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; min-width: 0; }
 .val label { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--dov); }
+.val label[hidden] { display: none; }
+#sökval { flex: 1 1 260px; }
+#sökval input { flex: 1; min-width: 0; }
+.antal { margin: 0 0 8px; font-size: 14px; color: var(--dov); }
 select, input[type="search"] {
   font: inherit; color: var(--text); background: var(--yta); border: 1px solid var(--kant);
   border-radius: 10px; padding: 8px 10px;
